@@ -21,7 +21,7 @@ after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   
   # push to docker hub
-  - docker push isdance/multi-client:latest
-  - docker push isdance/multi-nginx:latest
-  - docker push isdance/multi-server:latest
-  - docker push isdance/multi-worker:latest
+  - docker push isdance/multi-client
+  - docker push isdance/multi-nginx
+  - docker push isdance/multi-server
+  - docker push isdance/multi-worker
