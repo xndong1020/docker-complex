@@ -8,8 +8,4 @@ RUN npm install
 
 COPY . .
 
-# for dev env, use nodemon
 CMD ["npm", "start"]
-
-
-

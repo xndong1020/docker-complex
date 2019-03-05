@@ -10,6 +10,3 @@ COPY . .
 
 # for dev env, use nodemon
 CMD ["npm", "run", "dev"]
-
-
-
