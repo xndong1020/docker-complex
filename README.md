@@ -83,7 +83,8 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm","run", "build"]
+# build folder will be inside container, under /app/build
+RUN npm run build
 
 FROM nginx
 EXPOSE 3000
@@ -214,5 +215,36 @@ same settings for Dockerfile and Dockerfile.dev
 FROM nginx
 
 COPY ./default.conf /etc/nginx/conf.d/
+```
+
+Also the `.travis.yml`
+```yaml
+sudo: required
+services:
+  - docker # install docker 
+
+before_install:
+  #  build dev image
+  - docker build -t isdance/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  # test dev image
+  - docker run isdance/react-test npm test -- --coverage
+
+after_success:
+  #  build production images
+  - docker build -t isdance/multi-client ./client
+  - docker build -t isdance/multi-nginx ./nginx
+  - docker build -t isdance/multi-server ./server
+  - docker build -t isdance/multi-worker ./worker
+
+  # login to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  
+  # push to docker hub
+  - docker push isdance/multi-client
+  - docker push isdance/multi-nginx
+  - docker push isdance/multi-server
+  - docker push isdance/multi-worker
 ```
 
