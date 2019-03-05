@@ -8,7 +8,8 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm","run", "build"]
+# build folder will be inside container, under /app/build
+RUN npm run build
 
 FROM nginx
 EXPOSE 3000
