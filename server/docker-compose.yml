@@ -1,0 +1,9 @@
+version: '3'
+services: 
+  server:
+    image: isdance/docker-complex-server
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "4000:4000"

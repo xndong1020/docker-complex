@@ -1,0 +1,7 @@
+version: '3'
+services:
+  worker:
+    image: isdance/docker-complex-worker
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
