@@ -5,7 +5,8 @@ export default class Fib extends Component {
   state = {
     seenIndexes: [],
     values: {},
-    index: ''
+    index: '',
+    indexBackup: ''
   }
 
   componentDidMount() {
@@ -17,17 +18,19 @@ export default class Fib extends Component {
     const { value } = event.target
     if (value) {
       this.setState(prevState => {
-        return { ...prevState, index: value }
+        return { ...prevState, index: value, indexBackup: value }
       })
     }
   }
 
-  handleIndexSubmit = async event => {
-    event.preventDefault()
+  handleIndexSubmit = async evt => {
+    evt.preventDefault()
     const { index } = this.state
     await axios.post('/api/values', {
       index
     })
+    this.fetchIndexes()
+    this.fetchValues()
     this.setState(prevState => {
       return { ...prevState, index: '' }
     })
@@ -35,19 +38,20 @@ export default class Fib extends Component {
 
   renderSeenIndexes = () => {
     const { seenIndexes } = this.state
-    return seenIndexes.join(', ')
+    return seenIndexes.map(item => item.number).join(', ')
   }
 
   renderValues() {
     const entries = []
     const { values } = this.state
-    for (let key in values) {
+    if (values.key) {
       entries.push(
-        <div key={key}>
-          For index {key} I calculated {values[key]}
+        <div key={values.key}>
+          For key {values.key} my value is {values.value}
         </div>
       )
     }
+    return entries
   }
 
   render() {
@@ -55,7 +59,7 @@ export default class Fib extends Component {
     return (
       <div>
         <form>
-          <label htmlFor="">Enter your index:</label>
+          <label>Enter your index:</label>
           <input
             type="text"
             name="index"
@@ -63,7 +67,9 @@ export default class Fib extends Component {
             placeholder="Enter index"
             onChange={this.handleIndexChange}
           />
-          <button onSubmit={this.handleIndexSubmit}>Submit</button>
+          <button type="submit" onClick={this.handleIndexSubmit}>
+            Submit
+          </button>
         </form>
 
         <h3>Indexes I have seen:</h3>
@@ -77,8 +83,11 @@ export default class Fib extends Component {
 
   async fetchValues() {
     const values = await axios.get('/api/values/current')
+    let newValue = {}
+    newValue.key = this.state.indexBackup
+    newValue.value = values.data
     this.setState(prevState => {
-      return { ...prevState, values: values.data }
+      return { ...prevState, values: newValue }
     })
   }
 

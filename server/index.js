@@ -11,6 +11,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
 
+console.log('checking environment values', keys)
 // Postgres Client Setup
 const { Pool } = require('pg')
 const pgClient = new Pool({
@@ -51,19 +52,47 @@ pgClient
   .query('CREATE TABLE IF NOT EXISTS values(number INT)')
   .catch(err => console.log(err))
 
+// for initialization,
+redisClient.set('values', '', (err, result) => {
+  if (err) console.log(err)
+  else console.log(result)
+})
+
 app.get('/', (req, res) => {
   res.send('work')
 })
 
 app.get('/values', async (req, res) => {
-  const values = await pgClient.query('SELECT * FROM values')
-  res.send(values.rows)
+  try {
+    const values = await pgClient.query('SELECT * FROM values')
+    res.send(values.rows)
+  } catch (e) {
+    console.error(e)
+  }
 })
 
+const getValue = key => {
+  return new Promise((resolve, reject) => {
+    redisClient.get(key, (err, result) => {
+      if (err) reject(err)
+      else resolve(result)
+    })
+  })
+}
+
+const setValue = (key, value) => {
+  return new Promise((resolve, reject) => {
+    redisClient.set(key, value, (err, result) => {
+      if (err) reject(err)
+      else resolve(result)
+    })
+  })
+}
+
 app.get('/values/current', async (req, res) => {
-  const hgetall = util.promisify(redisClient.hgetall)
   try {
-    const values = await hgetall('values')
+    const values = await getValue('values')
+    console.log('/values/current', values)
     res.send(values)
   } catch (e) {
     console.error(e)
@@ -73,13 +102,13 @@ app.get('/values/current', async (req, res) => {
 app.post('/values', async (req, res) => {
   const { index } = req.body
   if (parseInt(index) > 40) return res.status(422).send('Index too high!')
-  redisClient.hset('values', index, 'Nothing yet')
+  await setValue('values', index)
   // send the index value to 'insert' channel
   redisPublisher.publish('insert', index)
   await pgClient.query('INSERT INTO values(number) VALUES($1)', [index])
   res.send({ working: true })
 })
 
-app.listen('5000', () => {
-  console.log('server is listening on port: 5000')
+app.listen('4000', () => {
+  console.log('server is listening on port: 4000')
 })

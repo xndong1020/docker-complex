@@ -19,7 +19,7 @@ const fib = index => {
 }
 
 sub.on('message', (channel, message) => {
-  redisClient.hset('values', message, fib(parseInt(message)))
+  redisClient.set('values', fib(parseInt(message)))
 })
 
 // subscribe to 'insert' event
