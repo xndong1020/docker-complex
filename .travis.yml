@@ -18,7 +18,7 @@ after_success:
   - docker build -t isdance/multi-worker ./worker
 
   # login to the docker CLI
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCER_ID" --password-stdin
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   
   # push to docker hub
   - docker push isdance/multi-client:latest
