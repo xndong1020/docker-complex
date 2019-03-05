@@ -8,7 +8,7 @@ before_install:
 
 script:
   # test dev image
-  - docker run isdance/react-test npm test -- --converage
+  - docker run isdance/react-test npm test -- --coverage
 
 after_success:
   #  build production images
