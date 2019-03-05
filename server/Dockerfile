@@ -1,0 +1,15 @@
+FROM node:alpine
+
+WORKDIR /app
+
+COPY ./package*.json ./
+
+RUN npm install
+
+COPY . .
+
+# for dev env, use nodemon
+CMD ["npm", "start"]
+
+
+

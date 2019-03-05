@@ -8,17 +8,17 @@ services:
     restart: always
     build:
       context: ./nginx
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile.dev # build a custom nginx image 
     ports:
-      - '3050:80'
+      - '3050:80' # 3050 is a arbitrary number
   api:
     build:
       context: ./server
       dockerfile: Dockerfile.dev
     volumes:
-      - /app/node_modules
+      - /app/node_modules # use node_modules from container, don't map back to local
       - ./server:/app
-    environment:
+    environment: # environment for this container
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PGUSER=postgres
@@ -31,16 +31,16 @@ services:
       context: ./client
       dockerfile: Dockerfile.dev
     volumes:
-      - /app/node_modules
+      - /app/node_modules # use node_modules from container, don't map back to local
       - ./client:/app
   worker:
     build:
       context: ./worker
       dockerfile: Dockerfile.dev
     volumes:
-      - /app/node_modules
+      - /app/node_modules # use node_modules from container, don't map back to local
       - ./worker:/app
-    environment:
+    environment: # environment for this container
       - REDIS_HOST=redis
       - REDIS_PORT=6379
 
