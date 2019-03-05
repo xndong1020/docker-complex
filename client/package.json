@@ -111,8 +111,8 @@
       "node"
     ],
     "watchPlugins": [
-      "D:\\docker-projects\\docker-complex\\client\\node_modules\\jest-watch-typeahead\\filename.js",
-      "D:\\docker-projects\\docker-complex\\client\\node_modules\\jest-watch-typeahead\\testname.js"
+      "<rootDir>/client/node_modules/jest-watch-typeahead/filename.js",
+      "<rootDir>/client/node_modules/jest-watch-typeahead/testname.js"
     ]
   },
   "babel": {
