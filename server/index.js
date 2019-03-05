@@ -92,7 +92,6 @@ const setValue = (key, value) => {
 app.get('/values/current', async (req, res) => {
   try {
     const values = await getValue('values')
-    console.log('/values/current', values)
     res.send(values)
   } catch (e) {
     console.error(e)
